@@ -4,9 +4,15 @@
 #include <gl/glut.h>
 #include <stdlib.h>
 #include <math.h>
+#include <ctime>
+#include <iostream>
+#include <Windows.h>
+
 
 static bool first = GLU_TRUE;
-static float Y = 0;
+static double Y = 0;
+int Time = 60 , distance = 1;
+
 void init()
 {
 	glEnable(GL_BLEND);
@@ -19,21 +25,57 @@ void init()
 void drawCircle()
 {
 
-	glColor4f(1, 1, 1.0,.5);
-	glutSolidSphere(1.0, 100, 50);
+	glColor4f(1, 1, 1.0,.3);
+	glutSolidSphere(1.0 * distance, 100, 50);
+
+	/*GLfloat angle, raioX = 1.0f, raioY = 1.0f;
+	GLfloat circle_points = 360.0f;
+
+
+	glBegin(GL_TRIANGLE_FAN);
+	glColor4f(1, 1, 1.0, .3);
+	glVertex2f(0.0f, 0.0f);
+
+	for (int i = 0; i <= 360; i++)
+	{
+		angle = 2 * 3.1415 * i / circle_points;
+		glVertex2f(0.0 + cos(angle) * raioX, 0.0 + sin(angle) * raioY);
+	}
+
+	glEnd();*/
 
 }
 
 void drawRightTriangle()
 {
-	
-	glBegin(GL_TRIANGLES);
-	glColor4f(0, 1, 1, 0.75);
-	glVertex3f(0.0, 0, 0);
-	glVertex3f(.3, .5, 0);
-	glVertex3f(.9, .1, 0);
-	glEnd();
+	glColor3f(1, 0, 0);
+	glutSolidSphere(1.0 * distance, 100, 50);
+
 }
+
+void drawSquare()
+{
+	const GLfloat x1 = -1.02, x2 = 1.02, y1 = -1.02, y2 = 1.02;
+	glPushMatrix();
+	
+	glBegin(GL_POLYGON);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex2f(x1, y1);
+	glVertex2f(x1, y2);
+	glVertex2f(x2, y2);
+	glVertex2f(x2, y1);
+	glEnd();
+	glPopMatrix();
+}
+
+void GL_idle()
+{
+	Sleep(100);
+    Y+= 2 *distance * .1/Time;
+	
+	glutPostRedisplay();
+}
+
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -41,8 +83,9 @@ void keyboard(unsigned char key, int x, int y)
 	{
 	case 't':
 		//first = !first;
-		Y+=.1;
-		glutPostRedisplay();
+		
+		glutIdleFunc(GL_idle);
+		//glutPostRedisplay();
 		break;
 
 	case 27:
@@ -60,10 +103,13 @@ void display()
 	
 	if (first)
 	{
-		glPushMatrix();
-		glTranslatef(0, Y, 0);
-		drawRightTriangle();
-		glPopMatrix();
+	
+       drawRightTriangle();
+
+	   glPushMatrix();
+	   glTranslatef(0, Y, 0);
+	   drawSquare();
+	   glPopMatrix();
 
 		drawCircle();
 	}
@@ -93,6 +139,8 @@ void reshape(int w, int h)
 
 	glLoadIdentity();
 
+	glOrtho(1.02, -1.02, 1.02, -1.02, 0, 0);
+
 	gluLookAt(0.0, 0.0, 5.0,
 		0.0, 0.0, 0.0,
 		0.0, 1.0, 0.0);
@@ -106,8 +154,9 @@ int main()
 	init();
 
 	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
 	glutDisplayFunc(display);
+	glutKeyboardFunc(keyboard);
+
 
 	glutMainLoop();
 	return 0;
@@ -123,3 +172,4 @@ int main()
 //   4. Use the Error List window to view errors
 //   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
 //   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+

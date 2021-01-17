@@ -3,9 +3,10 @@
 
 #include <gl/glut.h>
 #include <stdlib.h>
+#include <math.h>
 
-static int leftfirst = GL_TRUE;
-
+static bool first = GLU_TRUE;
+static float Y = 0;
 void init()
 {
 	glEnable(GL_BLEND);
@@ -15,21 +16,20 @@ void init()
 
 }
 
-void drawLeftTriangle()
+void drawCircle()
 {
-	glBegin(GL_TRIANGLES);
-	glColor4f(1, 1, 0, 0.75);
-	glVertex3f(0.1,.9,0);
-	glVertex3f(.1,.1,0);
-	glVertex3f(.7,.5,0);
-	glEnd();
+
+	glColor4f(1, 1, 1.0,.5);
+	glutSolidSphere(1.0, 100, 50);
+
 }
 
 void drawRightTriangle()
 {
+	
 	glBegin(GL_TRIANGLES);
 	glColor4f(0, 1, 1, 0.75);
-	glVertex3f(0.9, .9, 0);
+	glVertex3f(0.0, 0, 0);
 	glVertex3f(.3, .5, 0);
 	glVertex3f(.9, .1, 0);
 	glEnd();
@@ -40,7 +40,8 @@ void keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case 't':
-		leftfirst = !leftfirst;
+		//first = !first;
+		Y+=.1;
 		glutPostRedisplay();
 		break;
 
@@ -57,35 +58,44 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	if (leftfirst)
+	if (first)
 	{
-		drawLeftTriangle();
+		glPushMatrix();
+		glTranslatef(0, Y, 0);
 		drawRightTriangle();
+		glPopMatrix();
 
+		drawCircle();
 	}
 
 	else
 	{
+		drawCircle();
 		drawRightTriangle();
-		drawLeftTriangle();
 	}
+	
 
 	glFlush();
 }
 
 void reshape(int w, int h)
 {
-	glViewport(0,0,(GLsizei)w ,(GLsizei)h);
+
+	glViewport(0, 0, w, h);
+
 	glMatrixMode(GL_PROJECTION);
+
 	glLoadIdentity();
 
-	if (w <= h)
-		gluOrtho2D(0, 1, 0, 1.0 * (GLfloat)h / (GLfloat)w);
-	
-	else 
-		gluOrtho2D(0,1.0 * (GLfloat)h / (GLfloat)w , 0,1);
+	gluPerspective(60.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
 
+	glMatrixMode(GL_MODELVIEW);
 
+	glLoadIdentity();
+
+	gluLookAt(0.0, 0.0, 5.0,
+		0.0, 0.0, 0.0,
+		0.0, 1.0, 0.0);
 }
 
 int main()

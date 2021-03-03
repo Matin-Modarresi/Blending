@@ -1,0 +1,3 @@
+﻿  Blending.cpp
+D:\MATIN\c++\openGL\Blending\Blending\Blending.cpp(110,53): warning C4805: '|': unsafe mix of type 'int' and type 'bool' in operation
+  Blending.vcxproj -> D:\MATIN\c++\openGL\Blending\Debug\Blending.exe
